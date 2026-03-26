@@ -17,6 +17,7 @@ interface ProductFormProps {
 const EMPTY: Omit<Product, "id"> = {
   name: "",
   brand: "",
+  category: "",
   strength: "",
   packaging: "",
   packSize: "",
@@ -59,6 +60,7 @@ export function ProductForm({
       placeholder: "e.g. Amoxicillin 500mg",
     },
     { label: "Brand", key: "brand", placeholder: "e.g. GSK" },
+    { label: "Category", key: "category", placeholder: "e.g. Antibiotics" },
     { label: "Strength", key: "strength", placeholder: "e.g. 500mg" },
     { label: "Packaging", key: "packaging", placeholder: "e.g. Blister pack" },
     { label: "Pack Size", key: "packSize", placeholder: "e.g. 28 capsules" },

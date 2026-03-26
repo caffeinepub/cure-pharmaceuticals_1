@@ -18,6 +18,7 @@ export interface Product {
   'name' : string,
   'description' : string,
   'strength' : string,
+  'category' : string,
   'brand' : string,
   'priceEur' : number,
   'packaging' : string,
@@ -25,6 +26,7 @@ export interface Product {
   'image2' : string,
   'image3' : string,
 }
+export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -34,10 +36,14 @@ export interface _SERVICE {
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'deleteProduct' : ActorMethod<[bigint], undefined>,
   'getAllProducts' : ActorMethod<[], Array<Product>>,
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getProduct' : ActorMethod<[bigint], Product>,
   'getProductsByBrand' : ActorMethod<[string], Array<Product>>,
+  'getProductsByCategory' : ActorMethod<[string], Array<Product>>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'seedSampleProducts' : ActorMethod<[], undefined>,
   'updateProduct' : ActorMethod<[Product], undefined>,
 }

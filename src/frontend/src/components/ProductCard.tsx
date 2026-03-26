@@ -50,8 +50,15 @@ export function ProductCard({
 
       {/* Content */}
       <div className="p-4 flex flex-col flex-1">
-        <div className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-1">
-          {product.brand}
+        <div className="flex items-center gap-2 mb-1 flex-wrap">
+          <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+            {product.brand}
+          </span>
+          {product.category && (
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+              {product.category}
+            </span>
+          )}
         </div>
         <h3 className="font-bold text-foreground text-base leading-snug mb-1">
           {product.name}

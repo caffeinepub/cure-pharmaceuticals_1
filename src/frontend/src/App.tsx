@@ -48,6 +48,7 @@ function AppInner() {
         products={products}
         isLoading={isLoading}
         search={search}
+        onSearchChange={setSearch}
         onNavigate={handleNavigate}
       />
     );

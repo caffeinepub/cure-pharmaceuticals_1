@@ -1,6 +1,8 @@
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Search } from "lucide-react";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Product } from "../backend";
 import { ProductCard } from "../components/ProductCard";
 import { ProductModal } from "../components/ProductModal";
@@ -9,6 +11,7 @@ interface CatalogPageProps {
   products: Product[];
   isLoading: boolean;
   search: string;
+  onSearchChange: (s: string) => void;
   onNavigate: (page: "home" | "products" | "contact" | "admin") => void;
 }
 
@@ -18,18 +21,33 @@ export function CatalogPage({
   products,
   isLoading,
   search,
+  onSearchChange,
   onNavigate,
 }: CatalogPageProps) {
   const [selected, setSelected] = useState<Product | null>(null);
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  const categories = useMemo(() => {
+    const cats = Array.from(
+      new Set(products.map((p) => p.category).filter(Boolean)),
+    ).sort();
+    return ["All", ...cats];
+  }, [products]);
 
   const filtered = products.filter((p) => {
-    if (!search) return true;
-    const q = search.toLowerCase();
-    return (
-      p.name.toLowerCase().includes(q) ||
-      p.brand.toLowerCase().includes(q) ||
-      p.strength.toLowerCase().includes(q)
-    );
+    const matchesSearch = (() => {
+      if (!search) return true;
+      const q = search.toLowerCase();
+      return (
+        p.name.toLowerCase().includes(q) ||
+        p.brand.toLowerCase().includes(q) ||
+        p.strength.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q)
+      );
+    })();
+    const matchesCategory =
+      activeCategory === "All" || p.category === activeCategory;
+    return matchesSearch && matchesCategory;
   });
 
   return (
@@ -101,9 +119,49 @@ export function CatalogPage({
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
         data-ocid="products.section"
       >
+        {/* Inline search bar */}
+        <div className="relative mb-5" data-ocid="catalog.search_input">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Input
+            type="search"
+            placeholder="Search products by name, brand, strength…"
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="pl-9 h-11 bg-card border-border text-sm"
+          />
+        </div>
+
+        {/* Category chips */}
+        {categories.length > 1 && (
+          <div
+            className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide"
+            data-ocid="catalog.tab"
+          >
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setActiveCategory(cat)}
+                className={`whitespace-nowrap text-xs font-semibold px-4 py-1.5 rounded-full border transition-colors flex-shrink-0 ${
+                  activeCategory === cat
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
+                }`}
+                data-ocid="catalog.tab"
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-foreground">
-            {search ? `Results for "${search}"` : "All Products"}
+            {search
+              ? `Results for "${search}"${activeCategory !== "All" ? ` in ${activeCategory}` : ""}`
+              : activeCategory !== "All"
+                ? activeCategory
+                : "All Products"}
           </h2>
           {!isLoading && (
             <span className="text-sm text-muted-foreground">
@@ -139,7 +197,9 @@ export function CatalogPage({
           >
             <div className="text-5xl mb-4">🔍</div>
             <p className="text-lg font-medium">No products found</p>
-            <p className="text-sm mt-1">Try a different search term</p>
+            <p className="text-sm mt-1">
+              Try a different search term or category
+            </p>
           </div>
         ) : (
           <motion.div

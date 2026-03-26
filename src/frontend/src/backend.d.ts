@@ -7,6 +7,9 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export interface UserProfile {
+    name: string;
+}
 export interface Product {
     id: bigint;
     manufacturer: string;
@@ -15,6 +18,7 @@ export interface Product {
     name: string;
     description: string;
     strength: string;
+    category: string;
     brand: string;
     priceEur: number;
     packaging: string;
@@ -32,10 +36,14 @@ export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     deleteProduct(id: bigint): Promise<void>;
     getAllProducts(): Promise<Array<Product>>;
+    getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getProduct(id: bigint): Promise<Product>;
     getProductsByBrand(brand: string): Promise<Array<Product>>;
+    getProductsByCategory(category: string): Promise<Array<Product>>;
+    getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    saveCallerUserProfile(profile: UserProfile): Promise<void>;
     seedSampleProducts(): Promise<void>;
     updateProduct(product: Product): Promise<void>;
 }
